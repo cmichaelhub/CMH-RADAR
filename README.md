@@ -1,114 +1,89 @@
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="core/brand/coingecko-api-on-dark.svg">
-  <img src="core/brand/coingecko-api-on-light.svg" alt="Data powered by CoinGecko API" height="32">
 </picture>
 
-# Smart Money Radar
+# CMH Radar
 
-Scan today's hottest tokens, find the wallets trading them, score every wallet on real PnL and
-copyability, then paper copy-trade the best ones -- on autopilot if you want. It's the CoinGecko
-API wallet endpoints doing what a screener can't: your own rules, running on real trade history,
-24/7.
+CMH Radar is a crypto market and wallet intelligence project built on CoinGecko API data. It brings together token discovery, wallet analysis, scoring, and paper-trading tools in one customizable workflow.
 
-![Demo](docs/demo.gif)
+The project explores how market data and wallet activity can be used to evaluate tokens and analyze trading strategies.
 
-## Get your API key
+![Data powered by CoinGecko API](core/brand/coingecko-api-on-light.svg)
 
-Grab a free key at [coingecko.com/en/api](https://www.coingecko.com/en/api?utm_source=github&utm_content=smart-money-radar). The
-Scan and Wallets tabs need an **Analyst** plan or higher (that's where `top_traders`, `top_holders`
-and the wallet endpoints live); trending/new pools work on the free Demo plan, and the app shows a
-locked card instead of hanging when a feature isn't on your plan.
+## Features
 
-## What you need
+- **Token discovery:** Explore trending tokens and newly created liquidity pools.
+- **Wallet analysis:** Review supported wallet performance, trade history, and balances.
+- **Wallet scoring:** Evaluate wallets using repository-defined performance and copyability metrics.
+- **Strategy testing:** Backtest selection rules and review historical results.
+- **Paper trading:** Simulate trading decisions without executing real transactions.
+- **Reporting:** Generate reports from recorded analysis runs.
 
-- Python 3.12 and [`uv`](https://docs.astral.sh/uv/)
-- A CoinGecko API key ([get one](https://www.coingecko.com/en/api?utm_source=github&utm_content=smart-money-radar))
-- An AI coding agent (Claude Code or Codex) if you want to reskin or extend this
+Feature availability depends on the configured CoinGecko API plan and supported network endpoints.
 
-## Important data and chain notes
+## Requirements
 
-### CoinGecko data vs. repo-derived outputs
+- Python 3.12
+- [uv](https://docs.astral.sh/uv/)
+- A CoinGecko API key with access to the endpoints you intend to use
 
-CoinGecko API supplies the underlying market, token, pool, trade and wallet data used by this
-project. Wallet labels, skill and copyability scores, bot-like classifications, shortlists,
-signals, paper-trading decisions and reports are computed by this repository. They are editable
-examples, not CoinGecko API fields, official CoinGecko classifications, financial advice or
-validated trading signals. Inspect the supporting data and adapt the formulas before relying on
-them in your own workflow.
+Get an API key from the [CoinGecko API platform](https://www.coingecko.com/en/api).
 
-### Recommended chains for end-to-end testing
+## Installation
 
-For demos that combine discovery with the complete wallet workflow, start with **Ethereum, Base,
-BNB Chain, Robinhood Chain or Arc Chain**. Solana still offers useful market, token, pool and trade
-data together with wallet P&L and wallet-trade history, while its wallet balance and transfer
-coverage is currently more limited. Use one of the recommended chains when your build depends on
-those additional wallet views.
+Clone this repository and enter the project directory:
 
-This note is implementation context for you and your coding agent; chain-coverage gaps do not need
-to become the topic of creator-facing content.
-
-## Quickstart
-
+```bash
+git clone https://github.com/cmichaelhub/CMH-RADAR.git
+cd CMH-RADAR
 ```
+
+Install the dependencies:
+
+```bash
 make install
-cp env.example .env   # then paste your key into .env
-make run               # http://localhost:8000
 ```
 
-## Make it yours with your AI agent
+Create your local environment file:
 
-Paste any of these into Claude Code or Codex, from inside this repo:
+```bash
+cp env.example .env
+```
 
-1. "Change the Scan tab's default source from trending_1h to new_pools, and change the default budget to $250."
-2. "Restyle this to a purple/black theme. Keep the CoinGecko badge and the links block intact."
-3. "Add a filter to the Wallets tab for wallets seen in 3+ tokens this scan."
-4. "Make Base the default chain and explain how `WALLET_CHAIN_CAPS` handles endpoint differences."
-5. "Change the copyability formula in `app/scoring.py` to weight trade frequency more heavily."
-6. "Add a Telegram or Discord webhook that posts every autopilot decision."
+Add your API key to `.env`, then start the application:
 
-See `AGENTS.md` for the full repo map and customization recipes.
+```bash
+make run
+```
+
+Open [http://localhost:8000](http://localhost:8000) in your browser.
+
+Keep API keys and other credentials private. Never commit your `.env` file.
 
 ## How it works
 
-```
-Discovery                Real-time-ish              Your logic              Execution
-trending/new pools   →   poll followed wallets   →   scoring + rules   →   paper trades
-top_traders/holders      every N seconds             (app/scoring.py,        (core/paper.py)
-wallet pnl/trades                                     app/backtest.py)
-```
+CMH Radar combines token and pool discovery with supported wallet data. Repository-defined scoring and strategy rules analyze the collected information, while backtesting and paper-trading components let users evaluate decisions without placing real trades.
 
-| Layer | Endpoints used |
-|---|---|
-| Discovery | trending pools, new pools, megafilter, `top_traders`, `top_holders` |
-| Wallet profiling | `wallets/{address}/pnl`, `networks/{network}/wallets/{address}/trades`, `wallets/{address}/balances` |
-| Decision logic | your rules in `app/scoring.py` + `app/backtest.py` |
-| Execution | paper trading only (`core/paper.py`) |
+CoinGecko provides the underlying API data. Scores, labels, rankings, strategy outputs, and paper-trading decisions are generated by the application and are not official CoinGecko classifications.
 
-### The four modes
+## Data and limitations
 
-```
-make backtest SOURCE=trending_1h CHAIN=base     # walk-forward: select on the first 60%, replay the last 40%
-make forward MINUTES=3                          # live on paper, logs every decision
-make autopilot                                  # rescans + re-scores + trades on paper, forever
-make report RUN=latest                          # report.html + report-card.png for any run
-make article-kit RUN=latest HANDLE=you           # article-kit/ ready for an X Article
-```
+Available data varies by network, endpoint, and API plan. Wallet balances, transfers, performance metrics, and trade history may have different levels of coverage across supported chains.
 
-## What you can do on each plan
+Review the returned data and the implementation's scoring assumptions before relying on analytical results.
 
-| Feature | Demo (free) | Analyst+ |
-|---|---|---|
-| Trending / new pools | ✅ | ✅ |
-| Safe-movers megafilter | 🔒 [upgrade](https://www.coingecko.com/en/api/pricing?utm_source=github&utm_content=smart-money-radar) | ✅ |
-| `top_traders` / `top_holders` (Scan) | 🔒 [upgrade](https://www.coingecko.com/en/api/pricing?utm_source=github&utm_content=smart-money-radar) | ✅ |
-| Wallet PnL / trades / balances (Wallets, Follow) | 🔒 [upgrade](https://www.coingecko.com/en/api/pricing?utm_source=github&utm_content=smart-money-radar) | ✅ |
+## Important disclaimer
 
-Demo software. Paper trading only. CoinGecko API provides market data; it doesn't execute trades or
-give financial advice.
+CMH Radar is an analytical and educational software project. Paper-trading results are simulations, not guarantees of future performance. The project does not provide financial advice, and its paper-trading functionality does not execute real trades.
 
-<!-- coingecko-links:start -->
-- CoinGecko API: https://www.coingecko.com/en/api?utm_source=github&utm_content=smart-money-radar
-- Pricing: https://www.coingecko.com/en/api/pricing?utm_source=github&utm_content=smart-money-radar
-- Docs: https://docs.coingecko.com?utm_source=github&utm_content=smart-money-radar
-- Agent Skill + MCP: https://docs.coingecko.com/ai-integration?utm_source=github&utm_content=smart-money-radar
-<!-- coingecko-links:end -->
+## Acknowledgements
+
+CMH Radar builds on an existing Smart Money Radar codebase. Credit and applicable license notices for the original project and its contributors should be preserved.
+
+Market and wallet data are provided through the CoinGecko API.
+
+## Resources
+
+- [CoinGecko API](https://www.coingecko.com/en/api)
+- [CoinGecko API documentation](https://docs.coingecko.com/)
+- [CoinGecko API pricing](https://www.coingecko.com/en/api/pricing)

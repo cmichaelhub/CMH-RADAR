@@ -1,15 +1,16 @@
-/* CSS variables only. Reskin a fork by changing these; --theme-mode picks the right CoinGecko logo. */
+
+/* CMH Radar — theme variables */
 :root {
-  --theme-mode: light; /* light | dark | mono */
+  --theme-mode: dark;
 
-  --cg-green: #8bc53f;
-  --cg-green-dark: #4c9a2a;
+  --cg-green: #72f59a;
+  --cg-green-dark: #39b96d;
 
-  --bg: #ffffff;
-  --bg-elevated: #f7f9f6;
-  --text: #12271a;
-  --text-muted: #5c6b62;
-  --border: #e2e8e4;
+  --bg: #080d16;
+  --bg-elevated: #101825;
+  --text: #edf4fb;
+  --text-muted: #91a2b8;
+  --border: #243247;
 
   --radius-sm: 8px;
   --radius-md: 14px;
@@ -21,11 +22,13 @@
 
 [data-theme="dark"] {
   --theme-mode: dark;
-  --bg: #0b0f0d;
-  --bg-elevated: #141a17;
-  --text: #f4f7f4;
-  --text-muted: #a8b5ad;
-  --border: #263029;
+  --bg: #080d16;
+  --bg-elevated: #101825;
+  --text: #edf4fb;
+  --text-muted: #91a2b8;
+  --border: #243247;
+  --cg-green: #72f59a;
+  --cg-green-dark: #39b96d;
 }
 
 [data-theme="mono"] {
@@ -43,4 +46,26 @@ body {
   background: var(--bg);
   color: var(--text);
   font-family: var(--font-sans);
+}
+.cg-top-attribution {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+  padding-left: 12px;
+  font-size: 11px;
+  color: var(--muted, #888);
+  white-space: nowrap;
+}
+
+.cg-top-attribution img {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+}
+
+@media (max-width: 700px) {
+  .cg-top-attribution span {
+    display: none;
+  }
 }

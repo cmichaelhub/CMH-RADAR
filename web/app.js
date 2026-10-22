@@ -17,7 +17,8 @@ function chainImage(id){ return state.chains.find(c=>c.id===id)?.image; }
 function txHref(chain, tx){ const c=String(chain||'').toLowerCase(); const host=c==='solana'?'solscan.io/tx':c==='bsc'?'bscscan.com/tx':c==='polygon-pos'?'polygonscan.com/tx':c==='arbitrum-one'?'arbiscan.io/tx':c==='optimistic-ethereum'?'optimistic.etherscan.io/tx':c==='base'?'basescan.org/tx':c==='avalanche'?'snowtrace.io/tx':'etherscan.io/tx'; return `https://${host}/${encodeURIComponent(tx||'')}`; }
 function chainOption(c){ return `<option value="${esc(c.id)}">${esc(c.name)}</option>`; }
 function renderChainResults(q=""){ const rows=state.chains.filter(c=>!q||`${c.name} ${c.id}`.toLowerCase().includes(q.toLowerCase())).slice(0,12); $('#chain-results').innerHTML=rows.length?rows.map(c=>`<button class="chain-chip" data-chain="${esc(c.id)}">${c.image?`<img src="${esc(c.image)}">`:'◉'} ${esc(c.name)}</button>`).join(''):`<span class="muted">No matching network.</span>`; $$('.chain-chip').forEach(b=>b.onclick=()=>{ $('#scan-chain').value=b.dataset.chain; $('#scan-chain-search').value=state.chains.find(c=>c.id===b.dataset.chain)?.name||b.dataset.chain; renderChainResults($('#scan-chain-search').value); }); }
-async function boot(){ initTabs(); window.CGBrand.renderBadge($('#cg-badge')); window.CGBrand.renderFooter($('#cg-footer')); state.caps=await api('/api/capabilities'); state.config=await api('/api/config'); state.chains=await api('/api/chains'); $('#hero-chain-count').textContent=state.chains.length||'250+'; $('#scan-chain').innerHTML=state.chains.map(chainOption).join(''); $('#scan-chain').value=state.config.default_chain||'solana'; $('#scan-source').innerHTML=Object.entries(state.config.sources||{}).map(([k,v])=>`<option value="${k}">${esc(v)}</option>`).join(''); $('#scan-chain-search').value=state.chains.find(c=>c.id===$('#scan-chain').value)?.name||'Solana'; $('#scan-chain-search').oninput=e=>renderChainResults(e.target.value); $('#scan-chain').onchange=e=>{ $('#scan-chain-search').value=state.chains.find(c=>c.id===e.target.value)?.name||e.target.value; renderChainResults(e.target.value); }; renderChainResults(''); bindActions(); if(!state.caps.analyst){ $('#scan-locked').innerHTML=lockedCard({feature:'Radar scanning and wallet profiling need the Analyst plan or higher.'}); $('#scan-credits').textContent='Analyst endpoints are plan-gated'; } else { $('#scan-locked').innerHTML=''; $('#scan-credits').textContent='Analyst access ready · run uses REST credits'; } if(location.pathname==='/runs') tab('runs'); if(location.pathname==='/follow') tab('follow'); if(location.pathname==='/xray' && new URLSearchParams(location.search).get('token')) showXrayPage(); if(location.pathname==='/kit' && new URLSearchParams(location.search).get('run')) showKitPage(); await refreshFollowRuns(); }
+async function boot(){ initTabs(); window.CGBrand.renderBadge($('#cg-badge')); window.CGBrand.renderFooter($('#cg-footer')); state.caps=await api('/api/capabilities'); state.config=await api('/api/config'); state.chains=await api('/api/chains'); $('#hero-chain-count').textContent=state.chains.length||'250+'; $('#scan-chain').innerHTML=state.chains.map(chainOption).join(''); $('#scan-chain').value=state.config.default_chain||'solana'; $('#scan-source').innerHTML=Object.entries(state.config.sources||{}).map(([k,v])=>`<option value="${k}">${esc(v)}</option>`).join('');$('#scan-chain').onchange=e=>{ renderChainResults(e.target.value); };
+renderChainResults(''); bindActions(); if(!state.caps.analyst){ $('#scan-locked').innerHTML=lockedCard({feature:'Radar scanning and wallet profiling need the Analyst plan or higher.'}); $('#scan-credits').textContent='Analyst endpoints are plan-gated'; } else { $('#scan-locked').innerHTML=''; $('#scan-credits').textContent='Analyst access ready · run uses REST credits'; } if(location.pathname==='/runs') tab('runs'); if(location.pathname==='/follow') tab('follow'); if(location.pathname==='/xray' && new URLSearchParams(location.search).get('token')) showXrayPage(); if(location.pathname==='/kit' && new URLSearchParams(location.search).get('run')) showKitPage(); await refreshFollowRuns(); }
 
 async function refreshFollowRuns(){
   try{
@@ -27,7 +28,58 @@ async function refreshFollowRuns(){
     if((d.runs||[]).some(r=>r.running)) state.followTimer=setInterval(refreshFollowRuns,4000);
   }catch(e){ /* status check is best-effort */ }
 }
-function bindActions(){ $('#scan-run').onclick=runScanSafe; $('#wallet-filter-label').onchange=renderWallets; $('#wallet-filter-copyable').onchange=renderWallets; $('#wallet-filter-recent').onchange=renderWallets; $('#wallet-open').onclick=()=>openProfile($('#wallet-address').value.trim()); $('#follow-auto-pick').onclick=autoPick; $('#follow-add-instance').onclick=()=>toggleFollowConfig(true); $('#follow-cancel-instance').onclick=()=>toggleFollowConfig(false); $('#follow-clear-stopped').onclick=clearStoppedRuns; $('#follow-start').onclick=startFollow; $('#drawer-close').onclick=closeDrawer; $('#drawer-backdrop').onclick=e=>{if(e.target.id==='drawer-backdrop')closeDrawer()}; $('#radar-search-btn').onclick=searchRadar; $('#radar-search').onkeydown=e=>{if(e.key==='Enter')searchRadar()}; document.onkeydown=e=>{if(e.key==='Escape')closeDrawer()}; }
+function bindActions() {
+  const on = (selector, event, handler) => {
+    const el = $(selector);
+    if (el) el[event] = handler;
+  };
+
+  on('#scan-run', 'onclick', runScanSafe);
+
+  on('#wallet-filter-label', 'onchange', renderWallets);
+  on('#wallet-filter-copyable', 'onchange', renderWallets);
+  on('#wallet-filter-recent', 'onchange', renderWallets);
+  on('#wallet-filter-multi', 'onchange', renderWallets);
+
+  on('#wallet-open', 'onclick', () => {
+    const address = $('#wallet-address');
+    if (address) openProfile(address.value.trim());
+  });
+
+  on('#follow-auto-pick', 'onclick', autoPick);
+  on('#follow-add-instance', 'onclick', () => toggleFollowConfig(true));
+  on('#follow-cancel-instance', 'onclick', () => toggleFollowConfig(false));
+  on('#follow-clear-stopped', 'onclick', clearStoppedRuns);
+  on('#follow-start', 'onclick', startFollow);
+
+  on('#drawer-close', 'onclick', closeDrawer);
+
+  on('#drawer-backdrop', 'onclick', e => {
+    if (e.target.id === 'drawer-backdrop') closeDrawer();
+  });
+
+  on('#radar-search-btn', 'onclick', searchRadar);
+
+  on('#radar-search', 'onkeydown', e => {
+    if (e.key === 'Enter') searchRadar();
+  });
+const sidebarToggle = document.querySelector('#sidebar-toggle');
+const sidebar = document.querySelector('.side-nav');
+
+if (sidebarToggle && sidebar) {
+  sidebarToggle.onclick = () => {
+    const collapsed = sidebar.classList.toggle('sidebar-collapsed');
+    sidebarToggle.setAttribute('aria-expanded', String(!collapsed));
+    sidebarToggle.setAttribute(
+      'aria-label',
+      collapsed ? 'Expand sidebar' : 'Collapse sidebar'
+    );
+  };
+}
+  document.onkeydown = e => {
+    if (e.key === 'Escape') closeDrawer();
+  };
+} 
 function toggleFollowConfig(open){ $('#follow-config-card').style.display=open?'':'none'; $('#follow-add-instance').style.display=open?'none':''; }
 async function clearStoppedRuns(){ try{ await api('/api/follow/clear_stopped',{method:'POST'}); await refreshFollowRuns(); }catch(e){ followNotice(e.message,'error'); } }
 async function searchRadar(){ const q=$('#radar-search').value.trim(); if(q.length<2){$('#radar-search-results').innerHTML='<span class="muted">Type at least two characters.</span>';return;} const box=$('#radar-search-results'); box.innerHTML='<span class="muted"><span class="spinner"></span> Searching every network…</span>'; try{const r=await api(`/api/search?q=${encodeURIComponent(q)}`); const wallet=r.wallet?`<button class="search-result" data-wallet="${esc(r.wallet.address)}"><span class="wallet-orb">◈</span><span><b>Wallet profile</b><small>${esc(short(r.wallet.address))} · ${esc(r.wallet.kind||'address')}</small></span></button>`:''; const pools=(r.pools||[]).slice(0,8).map(p=>{ const key=`${p.network||'solana'}:${(p.token?.address||'').toLowerCase()}`; const queued=state.tokenQueue.has(key); return `<div class="search-result"><button class="search-result-main" data-add-key="${esc(key)}" data-chain="${esc(p.network||'solana')}" data-token='${esc(JSON.stringify({address:p.token?.address||'',symbol:p.token?.symbol||'',name:p.token?.name||'',image_url:p.token?.image_url||'',price_usd:p.price_usd,liquidity_usd:p.liquidity_usd,pool:p.pool||''}))}'>${avatar(p.token?.image_url,p.token?.symbol||'?')}<span><b>${esc(p.token?.symbol||p.pool_name||'Pool')}</b><small>${esc(p.pool_name||'')} · ${esc(p.network||'')} · ${esc(p.dex||'DEX')}</small></span><strong>${compact(p.liquidity_usd)}</strong></button><button class="ghost queue-add ${queued?'active':''}" data-add-key="${esc(key)}" data-chain="${esc(p.network||'solana')}" data-token='${esc(JSON.stringify({address:p.token?.address||'',symbol:p.token?.symbol||'',name:p.token?.name||'',image_url:p.token?.image_url||'',price_usd:p.price_usd,liquidity_usd:p.liquidity_usd,pool:p.pool||''}))}' title="Add to radar selection">${queued?'✓ added':'+ radar'}</button><a class="ghost xray-link" href="/xray?token=${encodeURIComponent(p.token?.address||'')}&chain=${encodeURIComponent(p.network||'solana')}" target="_blank" rel="noopener">X-ray ↗</a></div>`; }).join(''); box.innerHTML=wallet+pools||'<span class="muted">No token, pool, or wallet matches.</span>'; box.querySelectorAll('[data-wallet]').forEach(b=>b.onclick=()=>openProfile(b.dataset.wallet)); box.querySelectorAll('.queue-add, .search-result-main').forEach(b=>b.onclick=()=>{ let t; try{t=JSON.parse(b.dataset.token);}catch{return;} toggleQueueToken(b.dataset.chain,t); searchRadar(); }); }catch(e){box.innerHTML=`<span class="error-inline">Search failed: ${esc(e.message||'try again')}</span>`;} }
@@ -74,8 +126,18 @@ async function runQueueScan(){
   renderScanResult(merged,primaryChain);
 }
 async function runQueueScanSafe(){ const btn=$('#queue-scan-btn'); if(btn)btn.disabled=true; try{ await runQueueScan(); tab('scan'); }catch(e){ $('#scan-status').textContent='Scan failed'; $('#scan-results').innerHTML=`<div class="cap-notice">${esc(e.message)} <button class="ghost" onclick="runQueueScanSafe()">Retry</button></div>`; }finally{ if(btn)btn.disabled=false; } }
-function candidate(c){ const checked=c.likely_bot?'':'checked'; const tokens=(c.seen_in||[]).slice(0,4).map(t=>avatar(t.image||t.image_url,t.symbol||'?')).join(''); const seen=c.tokens_seen_in??c.seen_in?.length??0; const recentNote=c.recently_active?`Traded ${c.recent_trades_seen} time${c.recent_trades_seen===1?'':'s'} in the last ${RECENT_TRADES_LOOKBACK_HOURS}h (raw trade feed, not the top_traders endpoint)${c.hours_since_recent_trade!=null?` · last trade ${c.hours_since_recent_trade}h ago`:''}`:`Not seen in this token's own last ${RECENT_TRADES_LOOKBACK_HOURS}h of raw trades — may be an all-time top trader that's gone quiet here`; return `<label class="candidate"><input type="checkbox" class="cand-check" data-address="${esc(c.address)}" ${checked}><div class="candidate-identity"><div class="avatar-stack">${tokens||avatar('',c.short||'?')}</div><div class="candidate-main"><b>${esc(c.short||short(c.address))}</b><span>${esc(c.address||'')}</span></div></div><div class="candidate-evidence"><div class="candidate-stat"><small>SEEN IN</small><b>${seen} token${seen===1?'':'s'}</b><span class="token-mini-row">${tokens||'<span class="muted">—</span>'}</span></div><div class="candidate-stat"><small>REALIZED P&amp;L</small><b class="${(c.realized_seen_usd||0)>=0?'up':'down'}">${usd(c.realized_seen_usd,true)}</b><small>${c.trades_seen??0} trades</small></div></div><div class="candidate-badges"><span class="badge ${c.likely_bot?'bot':'good'}">${c.likely_bot?'bot-like':'candidate'}</span><span class="badge ${c.recently_active?'recent':'neutral'}" title="${esc(recentNote)}">${c.recently_active?'● recently traded':'○ not seen recently'}</span></div></label>`; }
-async function profileSelected(){ const addrs=$$('.cand-check:checked').map(x=>x.dataset.address).slice(0,state.config.defaults.wallets_profiled||30); if(!addrs.length)return; $('#wallets-status')?.remove(); tab('wallets'); $('#wallets-table-body').innerHTML='<tr><td colspan="8" class="empty-note">Profiling wallets as results arrive…</td></tr>'; state.wallets=[]; const url=`/api/radar/profile?chain=${encodeURIComponent($('#scan-chain').value)}&ids=${encodeURIComponent(addrs.join(','))}&budget=${$('#run-starting-cash')?.value||100}`; const r=await fetch(url); const reader=r.body.getReader(), dec=new TextDecoder(); let buf=''; while(true){const {value,done}=await reader.read(); if(done)break; buf+=dec.decode(value); for(const block of buf.split('\n\n').slice(0,-1)){const m=block.match(/event: (\w+)\ndata: (.*)/s); if(!m)continue; const d=JSON.parse(m[2]); if(m[1]==='wallet'&&!d.error){state.wallets.push(d); renderWallets();}} buf=buf.split('\n\n').pop();} $('#wallet-count').textContent=state.wallets.length; }
+function candidate(c){ const checked = '';const tokens=(c.seen_in||[]).slice(0,4).map(t=>avatar(t.image||t.image_url,t.symbol||'?')).join(''); const seen=c.tokens_seen_in??c.seen_in?.length??0; const recentNote=c.recently_active?`Traded ${c.recent_trades_seen} time${c.recent_trades_seen===1?'':'s'} in the last ${RECENT_TRADES_LOOKBACK_HOURS}h (raw trade feed, not the top_traders endpoint)${c.hours_since_recent_trade!=null?` · last trade ${c.hours_since_recent_trade}h ago`:''}`:`Not seen in this token's own last ${RECENT_TRADES_LOOKBACK_HOURS}h of raw trades — may be an all-time top trader that's gone quiet here`; return `<label class="candidate"><input type="checkbox" class="cand-check" data-address="${esc(c.address)}" ${checked}><div class="candidate-identity"><div class="avatar-stack">${tokens||avatar('',c.short||'?')}</div><div class="candidate-main"><b>${esc(c.short||short(c.address))}</b><span>${esc(c.address||'')}</span></div></div><div class="candidate-evidence"><div class="candidate-stat"><small>SEEN IN</small><b>${seen} token${seen===1?'':'s'}</b><span class="token-mini-row">${tokens||'<span class="muted">—</span>'}</span></div><div class="candidate-stat"><small>REALIZED P&amp;L</small><b class="${(c.realized_seen_usd||0)>=0?'up':'down'}">${usd(c.realized_seen_usd,true)}</b><small>${c.trades_seen??0} trades</small></div></div><div class="candidate-badges"><span class="badge ${c.likely_bot?'bot':'good'}">${c.likely_bot?'bot-like':'candidate'}</span><span class="badge ${c.recently_active?'recent':'neutral'}" title="${esc(recentNote)}">${c.recently_active?'● recently traded':'○ not seen recently'}</span></div></label>`; }
+async function profileSelected(){ const addrs=$$('.cand-check:checked').map(x=>x.dataset.address).slice(0,state.config.defaults.wallets_profiled||30); if(!addrs.length)return; $('#wallets-status')?.remove(); tab('wallets'); $('#wallets-table-body').innerHTML='<tr><td colspan="8" class="empty-note">Profiling wallets as results arrive…</td></tr>'; state.wallets=[]; const url=`/api/radar/profile?chain=${encodeURIComponent($('#scan-chain').value)}&ids=${encodeURIComponent(addrs.join(','))}&budget=${$('#run-starting-cash')?.value||100}`; const r=await fetch(url); const reader=r.body.getReader(), dec=new TextDecoder(); let buf=''; while(true){const {value,done}=await reader.read(); if(done)break; buf+=dec.decode(value); for(const block of buf.split('\n\n').slice(0,-1)){const m=block.match(/event: (\w+)\ndata: (.*)/s); if(!m)continue; const d=JSON.parse(m[2]);if(m[1]==='wallet'&&!d.error){
+    const candidate = (state.scan?.candidates || [])
+        .find(c => c.address?.toLowerCase() === d.address?.toLowerCase());
+
+    if (candidate) {
+        d.tokens_seen_in = candidate.tokens_seen_in ?? candidate.seen_in?.length ?? 0;
+    }
+
+    state.wallets.push(d);
+    renderWallets();
+}} buf=buf.split('\n\n').pop();} $('#wallet-count').textContent=state.wallets.length; }
 
 async function profileSelectedSafe(){
   const addrs=$$('.cand-check:checked').map(x=>x.dataset.address).slice(0,state.config.defaults.wallets_profiled||30);
@@ -100,8 +162,9 @@ const RECENT_ACTIVITY_DAYS=3;
 const RECENT_TRADES_LOOKBACK_HOURS=24;
 function lastActiveCell(days){ if(days==null) return `<span title="${esc(HEURISTIC_NOTE)}">—</span>`; const warn=days>RECENT_ACTIVITY_DAYS; return `<span class="${warn?'stale':'up'}" title="${esc(HEURISTIC_NOTE)}">${days}d ago${warn?' ⚠':''}</span>`; }
 function walletRow(w){ const selected=state.selected.has(w.address)?'checked':''; const wr=w.win_rate??w.match_metrics?.win_rate??w.pnl_features?.win_rate_tokens; const pnlVal=w.pnl_reliable===false?w.realized_pnl_usd:(w.total_pnl_usd??w.realized_pnl_usd); return `<tr class="clickable" data-address="${esc(w.address)}" data-chain="${esc(w.chain||'auto')}"><td><input class="follow-check" data-address="${esc(w.address)}" type="checkbox" ${selected}></td><td><div class="wallet-id"><span class="wallet-orb">◈</span><span><b>${esc(short(w.address))}</b><small>${esc(w.chain||'auto')}</small></span></div></td><td><span class="badge ${badgeClass(w.label)}" title="${esc((w.infra_note||w.label_rule||'')+' — '+HEURISTIC_NOTE)}">${esc((w.label||'unclassified').replaceAll('_',' '))}</span></td><td>${wr==null?'—':`${Math.round(wr*100)}%`}</td><td title="${esc(HEURISTIC_NOTE)}"><b>${w.skill_score??'—'}</b><div class="bar"><i style="width:${Math.min(100,w.skill_score||0)}%"></i></div></td><td title="${esc(HEURISTIC_NOTE)}"><b>${w.copyability??'—'}</b><div class="bar green"><i style="width:${Math.min(100,w.copyability||0)}%"></i></div></td><td class="${(pnlVal||0)>=0?'up':'down'}" title="${w.pnl_reliable===false?'Unrealized P&L hidden: implausible token pricing':''}">${usd(pnlVal,true)}${w.pnl_reliable===false?' *':''}</td><td>${lastActiveCell(w.days_since_last_trade)}</td></tr>`; }
-function renderWallets(){ let rows=state.wallets; const label=$('#wallet-filter-label').value; if(label!=='all')rows=rows.filter(w=>w.label===label); if($('#wallet-filter-copyable').checked)rows=rows.filter(w=>(w.copyability||0)>=50); if($('#wallet-filter-recent').checked)rows=rows.filter(w=>w.days_since_last_trade!=null&&w.days_since_last_trade<=RECENT_ACTIVITY_DAYS); $('#wallets-table-body').innerHTML=rows.sort((a,b)=>(b.skill_score||0)-(a.skill_score||0)).map(walletRow).join('')||'<tr><td colspan="8" class="empty-note">No profiles match these filters.</td></tr>'; $$('.clickable').forEach(tr=>tr.onclick=e=>{if(e.target.matches('input'))return;openProfile(tr.dataset.address,tr.dataset.chain||'auto')}); $$('.follow-check').forEach(i=>i.onchange=e=>{if(e.target.checked)state.selected.add(e.target.dataset.address);else state.selected.delete(e.target.dataset.address);updateSelectedCount();}); $('#wallet-count').textContent=state.wallets.length; updateSelectedCount(); }
-async function openProfile(address,chain='auto'){ if(!address)return; $('#drawer-backdrop').classList.add('open'); $('#drawer-body').innerHTML='<div class="loading"><span class="spinner"></span> Loading wallet profile…</div>'; try{const d=await api(`/api/wallet/profile?address=${encodeURIComponent(address)}&chain=${encodeURIComponent(chain||'auto')}`); if(d.locked){$('#drawer-body').innerHTML=lockedCard(d);return;} renderProfile(d);}catch(e){$('#drawer-body').innerHTML=`<div class="cap-notice">Profile could not be loaded: ${esc(e.message)}. Close this card and try again.</div>`;} }
+function renderWallets(){ let rows=state.wallets; const label=$('#wallet-filter-label').value; if(label!=='all')rows=rows.filter(w=>w.label===label); if($('#wallet-filter-copyable')?.checked.checked)rows=rows.filter(w=>(w.copyability||0)>=50); if($('#wallet-filter-recent')?.checked)rows=rows.filter(w=>w.days_since_last_trade!=null&&w.days_since_last_trade<=RECENT_ACTIVITY_DAYS);if($('#wallet-filter-multi')?.checked)rows=rows.filter(w=>(w.tokens_seen_in||0)>=3);console.log('Wallet token counts:', state.wallets.map(w => ({
+  address: w.address, tokens_seen_in: w.tokens_seen_in
+}))); $('#wallets-table-body').innerHTML=rows.sort((a,b)=>(b.skill_score||0)-(a.skill_score||0)).map(walletRow).join('')||'<tr><td colspan="8" class="empty-note">No profiles match these filters.</td></tr>'; $$('.clickable').forEach(tr=>tr.onclick=e=>{if(e.target.matches('input'))return;openProfile(tr.dataset.address,tr.dataset.chain||'auto')}); $$('.follow-check').forEach(i=>i.onchange=e=>{if(e.target.checked)state.selected.add(e.target.dataset.address);else state.selected.delete(e.target.dataset.address);updateSelectedCount();}); $('#wallet-count').textContent=state.wallets.length; updateSelectedCount(); }async function openProfile(address,chain='auto'){ if(!address)return; $('#drawer-backdrop').classList.add('open'); $('#drawer-body').innerHTML='<div class="loading"><span class="spinner"></span> Loading wallet profile…</div>'; try{const d=await api(`/api/wallet/profile?address=${encodeURIComponent(address)}&chain=${encodeURIComponent(chain||'auto')}`); if(d.locked){$('#drawer-body').innerHTML=lockedCard(d);return;} renderProfile(d);}catch(e){$('#drawer-body').innerHTML=`<div class="cap-notice">Profile could not be loaded: ${esc(e.message)}. Close this card and try again.</div>`;} }
 function sectionNotice(status,label){ return status==='ok'?'':`<div class="cap-notice">${label} data is ${status||'unavailable'} on this wallet/network.</div>`; }
 async function toggleDrawerFollow(d){ const button=$('#drawer-follow'); if(!button)return; const following=button.dataset.following==='true'; button.disabled=true; button.textContent=following?'Removing…':'Following…'; try{ const r=await api(following?'/api/follow/remove':'/api/follow/add',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({address:d.address,chain:d.chain})}); if(r?.error)throw new Error(r.error); button.dataset.following=following?'false':'true'; button.textContent=following?'Follow wallet':'Following'; }catch(e){ button.disabled=false; button.textContent=following?'Retry remove':'Retry follow'; followNotice(`Wallet follow update failed: ${e.message}`,'error'); }finally{ if(button.isConnected)button.disabled=false; } }
 function renderProfile(d){ const p=d.profile||{}; const pnlUnreliable=p.pnl_reliable===false; const pnl=pnlUnreliable?null:(p.total_pnl_usd??p.realized_pnl_usd); const tags=(p.tags||[]).map(t=>`<span class="badge neutral">${esc(t.replaceAll('_',' '))}</span>`).join(''); const chains=(p.active_chains||[]).map(c=>`<span class="chain-inline">${esc(c)}</span>`).join(''); const infraBanner=p.is_infra?`<div class="infra-banner">⚠ ${esc(p.infra_note||'This looks like a contract, not a personal wallet.')}</div>`:''; const rawPnl=p.pnl_features||{}; const pnlOutlierNote=pnlUnreliable?`<div class="metric-note">Total and unrealized P&amp;L hidden: this wallet holds a position with implausible pricing (raw API total: ${usd((rawPnl.lifetime_realized_pnl_usd_raw||0)+(rawPnl.lifetime_unrealized_pnl_usd_raw||0),true)}, not shown as a real number). Realized P&amp;L above is from this wallet's own matched trades and is unaffected.</div>`:((rawPnl.pnl_outliers_excluded||0)>0?`<div class="metric-note">Excludes ${rawPnl.pnl_outliers_excluded} position(s) with implausible pricing from the totals above.</div>`:''); const lastTradeWarn=p.days_since_last_trade!=null&&p.days_since_last_trade>RECENT_ACTIVITY_DAYS; $('#drawer-body').innerHTML=`<div class="drawer-kicker">WALLET PROFILE · ${esc(d.chain||'auto')}</div><h2>${esc(short(d.address))}</h2>${infraBanner}<div class="drawer-meta"><span class="badge ${badgeClass(p.label)}" title="${esc(HEURISTIC_NOTE)}">${esc((p.label||'unclassified').replaceAll('_',' '))}</span><span>${esc(p.style||'style unknown')}</span><span title="${esc(HEURISTIC_NOTE)}">copyability ${p.copyability??'—'}</span></div><div class="drawer-tags">${tags||'<span class="muted">No extra tags</span>'}</div>${pnlOutlierNote}<div class="drawer-actions"><button class="primary" id="drawer-follow" data-following="${d.following?'true':'false'}">${d.following?'Following':'Follow wallet'}</button><button class="ghost" onclick="navigator.clipboard?.writeText('${esc(d.address)}')">Copy address</button></div><div class="metric-grid"><div><small>TOTAL P&amp;L</small><b class="${(pnl||0)>=0?'up':'down'}">${usd(pnl,true)}</b><span class="metric-sub">realized ${usd(p.realized_pnl_usd,true)} · unrealized ${usd(p.unrealized_pnl_usd,true)}</span></div><div><small>WIN RATE</small><b>${p.win_rate==null?'—':`${Math.round(p.win_rate*100)}%`}</b><span class="metric-sub">${p.trades??0} closed trades</span></div><div><small>PORTFOLIO</small><b>${usd(p.portfolio_value_usd)}</b><span class="metric-sub" title="${esc(HEURISTIC_NOTE)}">skill ${p.skill_score??'—'}</span></div><div title="${esc(HEURISTIC_NOTE)}"><small>LAST TRADE</small><b class="${lastTradeWarn?'stale':''}">${p.days_since_last_trade==null?'—':`${p.days_since_last_trade}d ago`}</b><span class="metric-sub">${lastTradeWarn?'quiet — may not trade again soon':'recently active'}</span></div></div><div class="chain-strip"><small>ACTIVE CHAINS</small>${chains||'<span class="muted">No chain rollup</span>'}</div><div class="profile-tabs"><button class="active" data-view="holdings">Holdings</button><button data-view="performance">Performance</button><button data-view="trades">Trades</button><button data-view="transfers">Transfers</button><button data-view="chains">By chain</button></div><div id="profile-content">${profileView(d,'holdings')}</div>`; $$('.profile-tabs button').forEach(b=>b.onclick=()=>{$$('.profile-tabs button').forEach(x=>x.classList.toggle('active',x===b));$('#profile-content').innerHTML=profileView(d,b.dataset.view)}); $('#drawer-follow').onclick=()=>toggleDrawerFollow(d); }
@@ -227,4 +290,331 @@ function renderKitPage(k,runId){
   $('#kit-copy').onclick=()=>{ navigator.clipboard?.writeText(k.draft||''); const b=$('#kit-copy'); const original=b.textContent; b.textContent='Copied ✓'; setTimeout(()=>{b.textContent=original;},1500); };
 }
 function prettifyRunId(runId){ return String(runId||'').replaceAll('-',' ').replaceAll('_',' '); }
+
+/* CMH RADAR — LIVE DASHBOARD WIDGETS */
+function updateDashboardWidgets() {
+  const tables = document.querySelectorAll(".widget-table tbody");
+  if (tables.length < 3) return;
+
+  const money = v => {
+    if (v == null || !Number.isFinite(Number(v))) return "—";
+    return "$" + Number(v).toLocaleString("en-US", {
+      maximumFractionDigits: 6
+    });
+  };
+
+  const change = v => {
+    if (v == null || !Number.isFinite(Number(v))) return "—";
+    const n = Number(v);
+    return `<span class="${n >= 0 ? "up" : "down"}">${n > 0 ? "+" : ""}${n.toFixed(2)}%</span>`;
+  };
+
+  const tokens = state.scan?.tokens || [];
+  tables[0].innerHTML = tokens.length
+    ? tokens.slice(0, 5).map((t, i) => `
+        <tr>
+          <td>${i + 1}</td>
+          <td class="widget-token">${esc(t.symbol || t.name || "Unknown")}</td>
+          <td>${money(t.price_usd)}</td>
+          <td>—</td>
+          <td>${change(t.change_24h)}</td>
+        </tr>
+      `).join("")
+    : `<tr><td colspan="5" class="empty-note">Run a scan to populate tokens.</td></tr>`;
+
+  const wallets = [...(state.wallets || [])]
+    .sort((a, b) => (b.skill_score || 0) - (a.skill_score || 0));
+
+  tables[1].innerHTML = wallets.length
+    ? wallets.slice(0, 5).map((w, i) => `
+        <tr>
+          <td>${i + 1}</td>
+          <td><button class="view-all" data-dashboard-wallet="${esc(w.address)}">${esc(short(w.address))}</button></td>
+          <td>${esc((w.label || "Unclassified").replaceAll("_", " "))}</td>
+          <td class="${((w.total_pnl_usd ?? w.realized_pnl_usd) || 0) >= 0 ? "up" : "down"}">${usd(w.total_pnl_usd ?? w.realized_pnl_usd, true)}</td>
+        </tr>
+      `).join("")
+    : `<tr><td colspan="4" class="empty-note">Profile wallets to see results.</td></tr>`;
+
+  const candidates = state.scan?.candidates || [];
+  const recent = candidates.filter(c => c.recently_active).slice(0, 5);
+
+  tables[2].innerHTML = recent.length
+    ? recent.map(c => `
+        <tr>
+          <td>Recent</td>
+          <td>${esc(c.short || short(c.address))}</td>
+          <td><span class="signal-pill">Wallet activity</span></td>
+          <td>${Number(c.recent_trades_seen || 0)} trades</td>
+        </tr>
+      `).join("")
+    : `<tr><td colspan="4" class="empty-note">Recent wallet signals appear after a scan.</td></tr>`;
+
+  tables[1].querySelectorAll("[data-dashboard-wallet]").forEach(button => {
+    button.onclick = () => openProfile(button.dataset.dashboardWallet);
+  });
+}
+
+/* Refresh cards whenever existing data changes */
+const originalRenderScanResult = renderScanResult;
+renderScanResult = function(result, chain) {
+  originalRenderScanResult(result, chain);
+  updateDashboardWidgets();
+};
+
+const originalRenderWallets = renderWallets;
+renderWallets = function() {
+  originalRenderWallets();
+  updateDashboardWidgets();
+};
+
+const originalRenderFollowRuns = renderFollowRuns;
+renderFollowRuns = function(runs) {
+  originalRenderFollowRuns(runs);
+  updateDashboardWidgets();
+};
+
+updateDashboardWidgets();
+
 boot();
+/* CMH Radar — Smart Wallet Comparison */
+(() => {
+  const compareSelected = new Set();
+  let compareReady = false;
+
+  const $ = (s, root = document) => root.querySelector(s);
+
+  const money = value => {
+    if (value == null || !Number.isFinite(Number(value))) return "—";
+    return Number(value).toLocaleString("en-US", {
+      style: "currency", currency: "USD", maximumFractionDigits: 2
+    });
+  };
+
+  const metric = value =>
+    value == null || !Number.isFinite(Number(value)) ? "—" : value;
+
+  function getWallet(address) {
+    return ((typeof state !== "undefined" && state.wallets) || [])
+      .find(w => w.address?.toLowerCase() === address.toLowerCase());
+  }
+
+  function getPnl(w) {
+    return w.pnl_reliable === false
+      ? w.realized_pnl_usd
+      : (w.total_pnl_usd ?? w.realized_pnl_usd);
+  }
+
+  function getWinRate(w) {
+    const value = w.win_rate ??
+      w.match_metrics?.win_rate ??
+      w.pnl_features?.win_rate_tokens;
+
+    if (value == null || !Number.isFinite(Number(value))) return "—";
+    const n = Number(value);
+    return `${Math.round((n <= 1 ? n * 100 : n))}%`;
+  }
+
+  function getActivity(w) {
+    if (w.days_since_last_trade == null) return "Unknown";
+    if (Number(w.days_since_last_trade) === 0) return "Today";
+    return `${w.days_since_last_trade} day(s) ago`;
+  }
+
+  function injectPanel() {
+    const panel = $("#panel-wallets");
+    if (!panel || $("#smart-wallet-compare")) return;
+
+    const section = document.createElement("section");
+    section.id = "smart-wallet-compare";
+    section.className = "card smart-compare";
+    section.innerHTML = `
+      <div class="smart-compare-head">
+        <div>
+          <div class="eyebrow">WALLET RESEARCH</div>
+          <h2>Smart Wallet Comparison</h2>
+          <p>Select at least two profiled wallets below to compare them side by side.</p>
+        </div>
+        <button type="button" class="ghost" id="compare-clear">Clear</button>
+      </div>
+      <div id="compare-status" class="compare-status">
+        0 wallets selected
+      </div>
+      <div id="compare-results" class="compare-empty">
+        Profile wallets first, then select them using the Compare checkboxes.
+      </div>
+    `;
+
+    const table = $("#wallets-table-body");
+    const tableContainer = table?.closest(".card, .widget-table, .table-wrap");
+    if (tableContainer?.parentNode) {
+      tableContainer.parentNode.insertBefore(section, tableContainer);
+    } else {
+      panel.prepend(section);
+    }
+
+    $("#compare-clear").addEventListener("click", () => {
+      compareSelected.clear();
+      updateCheckboxes();
+      renderComparison();
+    });
+
+    compareReady = true;
+  }
+
+  function addCompareCheckboxes() {
+    const table = $("#wallets-table-body");
+    if (!table) return;
+
+    table.querySelectorAll("tr[data-address]").forEach(row => {
+      const firstCell = row.querySelector("td");
+      const address = row.dataset.address;
+      if (!firstCell || !address || firstCell.querySelector(".compare-wallet")) return;
+
+      const label = document.createElement("label");
+      label.className = "compare-wallet";
+      label.title = "Select this wallet for comparison";
+
+      const checkbox = document.createElement("input");
+      checkbox.type = "checkbox";
+      checkbox.className = "compare-wallet-check";
+      checkbox.dataset.compareAddress = address;
+      checkbox.checked = compareSelected.has(address.toLowerCase());
+
+      const text = document.createElement("span");
+      text.textContent = "Compare";
+
+      label.append(checkbox, text);
+      firstCell.appendChild(label);
+
+      checkbox.addEventListener("click", event => event.stopPropagation());
+      checkbox.addEventListener("change", () => {
+        const key = address.toLowerCase();
+
+        if (checkbox.checked) {
+          compareSelected.add(key);
+        } else {
+          compareSelected.delete(key);
+        }
+
+        renderComparison();
+      });
+    });
+  }
+
+  function updateCheckboxes() {
+    document.querySelectorAll(".compare-wallet-check").forEach(checkbox => {
+      checkbox.checked = compareSelected.has(
+        (checkbox.dataset.compareAddress || "").toLowerCase()
+      );
+    });
+  }
+
+  function renderComparison() {
+    if (!compareReady) injectPanel();
+
+    const status = $("#compare-status");
+    const results = $("#compare-results");
+    if (!status || !results) return;
+
+    const wallets = [...compareSelected]
+      .map(getWallet)
+      .filter(Boolean);
+
+    status.textContent = `${wallets.length} wallet(s) selected`;
+
+    if (wallets.length < 2) {
+      results.className = "compare-empty";
+      results.textContent = "Select at least two profiled wallets to see the comparison.";
+      return;
+    }
+
+    const rows = [
+      ["Address", w => w.address],
+      ["Network", w => w.chain ?? "—"],
+      ["P&L (USD)", w => money(getPnl(w))],
+      ["Win rate", getWinRate],
+      ["Skill score", w => metric(w.skill_score)],
+      ["Copyability", w => metric(w.copyability)],
+      ["Days since last trade", w => getActivity(w)],
+      ["Token recurrence count", w => metric(w.tokens_seen_in)],
+      ["P&L reliability", w => w.pnl_reliable === false
+        ? "Unreliable / realized P&L shown"
+        : "Not flagged as unreliable"]
+    ];
+
+    results.className = "compare-table-wrap";
+    results.replaceChildren();
+
+    const table = document.createElement("table");
+    table.className = "compare-table";
+
+    const thead = document.createElement("thead");
+    const headRow = document.createElement("tr");
+    const firstHead = document.createElement("th");
+    firstHead.textContent = "Metric";
+    headRow.appendChild(firstHead);
+
+    wallets.forEach((w, index) => {
+      const th = document.createElement("th");
+      th.textContent = `Wallet ${index + 1}`;
+      const address = document.createElement("small");
+      address.textContent = w.address;
+      th.appendChild(document.createElement("br"));
+      th.appendChild(address);
+      headRow.appendChild(th);
+    });
+
+    thead.appendChild(headRow);
+    table.appendChild(thead);
+
+    const tbody = document.createElement("tbody");
+
+    rows.forEach(([label, getter]) => {
+      const tr = document.createElement("tr");
+      const th = document.createElement("th");
+      th.textContent = label;
+      tr.appendChild(th);
+
+      wallets.forEach(w => {
+        const td = document.createElement("td");
+        td.textContent = getter(w) ?? "—";
+
+        if (label === "P&L (USD)") {
+          const pnl = getPnl(w);
+          if (pnl != null && Number.isFinite(Number(pnl))) {
+            td.classList.add(Number(pnl) >= 0 ? "up" : "down");
+          }
+        }
+
+        tr.appendChild(td);
+      });
+
+      tbody.appendChild(tr);
+    });
+
+    table.appendChild(tbody);
+    results.appendChild(table);
+  }
+
+  function init() {
+    injectPanel();
+    addCompareCheckboxes();
+
+    const table = $("#wallets-table-body");
+    if (table) {
+      new MutationObserver(() => {
+        addCompareCheckboxes();
+        updateCheckboxes();
+      }).observe(table, { childList: true, subtree: true });
+    }
+
+    renderComparison();
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init, { once: true });
+  } else {
+    init();
+  }
+})();

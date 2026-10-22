@@ -34,3 +34,1672 @@
 .perf-stats i{font-style:normal}
 .perf-stats i:not(:first-child)::before{content:'· ';color:var(--border)}
 .live-label.stopped{color:var(--text-muted)}
+
+/* ========================================
+   CMH RADAR — BRAND & VISUAL REDESIGN
+   ======================================== */
+
+:root {
+  --cmh-bg: #080d16;
+  --cmh-surface: #101825;
+  --cmh-surface-hover: #162233;
+  --cmh-border: #243247;
+  --cmh-green: #72f59a;
+  --cmh-teal: #39d6c5;
+  --cmh-text: #edf4fb;
+  --cmh-muted: #91a2b8;
+}
+
+html,
+body {
+  background: var(--cmh-bg);
+  color: var(--cmh-text);
+}
+
+body {
+  background-image:
+    radial-gradient(
+      ellipse at 15% 0%,
+      rgba(57, 214, 197, 0.07),
+      transparent 42%
+    );
+}
+
+.app-shell {
+  max-width: 1500px;
+  margin: 0 auto;
+  padding: 28px;
+}
+
+.hero {
+  background: linear-gradient(
+    125deg,
+    #101d2c 0%,
+    #112c2b 58%,
+    #101825 100%
+  );
+  border: 1px solid var(--cmh-border);
+  border-radius: 20px;
+  padding: 32px;
+  margin-bottom: 22px;
+  box-shadow: 0 16px 45px rgba(0, 0, 0, 0.18);
+}
+
+.hero h1 {
+  color: var(--cmh-text);
+  letter-spacing: -1.4px;
+  font-size: clamp(30px, 4vw, 46px);
+  margin: 8px 0;
+}
+
+.hero p {
+  color: var(--cmh-muted);
+  line-height: 1.7;
+  max-width: 650px;
+}
+
+.eyebrow {
+  color: var(--cmh-green);
+  letter-spacing: 1.6px;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.tabs {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 8px;
+  margin-bottom: 24px;
+  background: var(--cmh-surface);
+  border: 1px solid var(--cmh-border);
+  border-radius: 14px;
+}
+
+.tabs button {
+  border: 1px solid transparent;
+  border-radius: 9px;
+  padding: 12px 20px;
+  color: var(--cmh-muted);
+  background: transparent;
+  font-weight: 650;
+  transition: background 0.2s, color 0.2s;
+}
+
+.tabs button:hover,
+.tabs button.active {
+  color: var(--cmh-green);
+  background: rgba(114, 245, 154, 0.09);
+  border-color: rgba(114, 245, 154, 0.2);
+}
+
+.control-card,
+.card,
+#follow-config-card,
+.follow-runs-list > *,
+.run-grid > *,
+.chain-results > *,
+.token-queue > * {
+  background-color: var(--cmh-surface);
+  border-color: var(--cmh-border);
+  border-radius: 15px;
+}
+
+.control-card {
+  padding: 26px;
+}
+
+h2,
+.card-title {
+  color: var(--cmh-text);
+  letter-spacing: -0.4px;
+}
+
+p,
+.muted,
+.empty-note {
+  color: var(--cmh-muted);
+}
+
+input,
+select,
+textarea {
+  background-color: #0a121e;
+  color: var(--cmh-text);
+  border-color: var(--cmh-border);
+  border-radius: 9px;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: 1px solid var(--cmh-teal);
+  border-color: var(--cmh-teal);
+}
+
+button.primary,
+button.primary.big {
+  color: #07120c;
+  background: var(--cmh-green);
+  border: 1px solid var(--cmh-green);
+  border-radius: 10px;
+  font-weight: 800;
+  transition: transform 0.2s, filter 0.2s;
+}
+
+button.primary:hover,
+button.primary.big:hover {
+  filter: brightness(1.08);
+  transform: translateY(-1px);
+}
+
+button.ghost {
+  color: var(--cmh-text);
+  background: #152132;
+  border: 1px solid var(--cmh-border);
+  border-radius: 9px;
+}
+
+button.ghost:hover {
+  border-color: var(--cmh-teal);
+  color: var(--cmh-teal);
+}
+
+table {
+  border-color: var(--cmh-border);
+}
+
+th {
+  color: var(--cmh-muted);
+  background: #0c1420;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+td {
+  border-color: var(--cmh-border);
+}
+
+tr:hover td {
+  background: rgba(57, 214, 197, 0.035);
+}
+
+.statusline {
+  border-top-color: var(--cmh-border);
+}
+
+.live-dot {
+  background: var(--cmh-green);
+  box-shadow: 0 0 10px rgba(114, 245, 154, 0.5);
+}
+
+.drawer {
+  background: var(--cmh-surface);
+  border-left: 1px solid var(--cmh-border);
+  color: var(--cmh-text);
+}
+
+@media (max-width: 700px) {
+  .app-shell {
+    padding: 14px;
+  }
+
+  .hero {
+    padding: 22px;
+    border-radius: 15px;
+  }
+
+  .control-card {
+    padding: 18px;
+  }
+
+  .tabs button {
+    padding: 10px 13px;
+  }
+}
+
+/* CMH Radar — layout refinement */
+
+.hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 28px;
+  padding: 28px 32px;
+  min-height: 145px;
+}
+
+.hero .brand {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.hero .brand h1 {
+  margin-top: 7px;
+  margin-bottom: 5px;
+  font-size: clamp(30px, 3.5vw, 42px);
+}
+
+.hero .brand p {
+  margin: 8px 0 0;
+  max-width: 620px;
+}
+
+.hero-stats {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  flex-shrink: 0;
+}
+
+.hero-stats b {
+  color: var(--cmh-green);
+  font-size: 28px;
+}
+
+.hero-stats span {
+  display: block;
+  margin-top: 5px;
+  color: var(--cmh-muted);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.7px;
+}
+
+.control-title {
+  align-items: center;
+  gap: 24px;
+}
+
+.control-title h2 {
+  font-size: clamp(22px, 2.5vw, 28px);
+  margin: 8px 0;
+}
+
+.radar-search {
+  margin-top: 22px;
+  margin-bottom: 20px;
+}
+
+.controls {
+  gap: 16px;
+  margin-top: 18px;
+}
+
+.field {
+  gap: 9px;
+}
+
+@media (max-width: 850px) {
+  .hero,
+  .hero .brand {
+    align-items: flex-start;
+  }
+
+  .hero {
+    flex-direction: column;
+  }
+
+  .hero-stats {
+    gap: 24px;
+  }
+
+  .control-title {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+/* CMH Radar — discovery layout cleanup */
+#panel-scan .radar-search {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-width: 0;
+}
+
+#panel-scan .radar-search input {
+  flex: 1;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+#panel-scan .radar-search button {
+  flex: 0 0 auto;
+  min-width: 76px;
+  white-space: nowrap;
+}
+
+#panel-scan .controls {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr) minmax(0, 0.7fr);
+  align-items: start;
+  gap: 16px;
+  margin-top: 20px;
+}
+
+#panel-scan .field {
+  min-width: 0;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+#panel-scan .field input,
+#panel-scan .field select,
+#panel-scan .select-wrap {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+#panel-scan .field small {
+  display: block;
+  margin-top: 7px;
+  line-height: 1.5;
+  font-size: 11px;
+}
+
+#panel-scan .control-title {
+  gap: 20px;
+  align-items: center;
+}
+
+#panel-scan .control-title > div {
+  min-width: 0;
+}
+
+#panel-scan .control-title h2 {
+  line-height: 1.25;
+}
+
+@media (max-width: 760px) {
+  #panel-scan .controls {
+    grid-template-columns: 1fr;
+  }
+
+  #panel-scan .control-title {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+
+/* =========================================
+   CMH RADAR — VISUAL POLISH
+   Safe layout overrides; existing logic stays
+   ========================================= */
+
+:root {
+  --cmh-bg: #080d16;
+  --cmh-card: #101825;
+  --cmh-card-hover: #151f2e;
+  --cmh-border: #253246;
+  --cmh-text: #edf4fb;
+  --cmh-muted: #91a0b5;
+  --cmh-green: #72f59a;
+}
+
+/* Consistent sizing and page spacing */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background:
+    radial-gradient(ellipse at 50% 0%, #142337 0%, transparent 48%),
+    var(--cmh-bg);
+  color: var(--cmh-text);
+}
+
+.app-shell {
+  width: min(1440px, calc(100% - 48px));
+  margin: 0 auto;
+  padding-bottom: 48px;
+}
+
+/* Header */
+.hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 32px;
+  padding: 48px 0 36px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  min-width: 0;
+}
+
+.hero h1 {
+  margin: 6px 0 10px;
+  font-size: clamp(32px, 4vw, 48px);
+  line-height: 1.1;
+  letter-spacing: -1.6px;
+}
+
+.hero p,
+.section-head p,
+.control-title p {
+  color: var(--cmh-muted);
+  line-height: 1.7;
+  max-width: 680px;
+}
+
+.eyebrow {
+  color: var(--cmh-green);
+  font-size: 11px;
+  font-weight: 750;
+  letter-spacing: 1.8px;
+  line-height: 1.6;
+}
+
+.hero-stats {
+  display: flex;
+  gap: 16px;
+  flex-shrink: 0;
+}
+
+.hero-stats > div {
+  min-width: 125px;
+  padding: 18px;
+  border: 1px solid var(--cmh-border);
+  border-radius: 16px;
+  background: rgba(16, 24, 37, 0.8);
+}
+
+.hero-stats b {
+  display: block;
+  font-size: 26px;
+  color: var(--cmh-green);
+}
+
+.hero-stats span {
+  display: block;
+  margin-top: 6px;
+  color: var(--cmh-muted);
+  font-size: 12px;
+}
+
+/* Navigation */
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 28px;
+  padding: 7px;
+  border: 1px solid var(--cmh-border);
+  border-radius: 14px;
+  background: rgba(16, 24, 37, 0.85);
+}
+
+.tabs button {
+  min-height: 42px;
+  padding: 10px 18px;
+  border-radius: 9px;
+}
+
+.tabs button.active {
+  background: #1a2d27;
+  color: var(--cmh-green);
+  border: 1px solid #315b43;
+}
+
+/* Main discovery card */
+.control-card,
+.card {
+  min-width: 0;
+  padding: clamp(20px, 3vw, 32px);
+  border: 1px solid var(--cmh-border);
+  border-radius: 20px;
+  background: linear-gradient(145deg, #111c2b, #0d1420);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.14);
+}
+
+.control-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 28px;
+}
+
+.control-title > div {
+  min-width: 0;
+}
+
+.control-title h2,
+.section-head h2 {
+  margin: 8px 0 10px;
+  font-size: clamp(23px, 2.5vw, 32px);
+  line-height: 1.25;
+  letter-spacing: -0.7px;
+}
+
+.control-title p {
+  margin: 0;
+}
+
+/* Search: input and button stay on one line */
+.radar-search {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-width: 0;
+  min-height: 54px;
+  margin-bottom: 22px;
+  padding: 5px 6px 5px 16px;
+  border: 1px solid #314158;
+  border-radius: 12px;
+  background: #080f1a;
+}
+
+.radar-search > span {
+  flex-shrink: 0;
+  color: var(--cmh-green);
+  font-size: 23px;
+}
+
+.radar-search input {
+  flex: 1 1 auto;
+  width: 100%;
+  min-width: 0;
+  padding: 12px 4px;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: var(--cmh-text);
+  font-size: 14px;
+  box-shadow: none;
+}
+
+.radar-search input:focus {
+  border: 0;
+  box-shadow: none;
+}
+
+.radar-search button {
+  flex: 0 0 auto;
+  min-width: 94px;
+  min-height: 40px;
+  white-space: nowrap;
+}
+
+/* Discovery controls */
+#panel-scan .controls {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr) minmax(0, 0.75fr);
+  gap: 20px;
+  align-items: start;
+  margin-top: 24px;
+}
+
+#panel-scan .field {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  width: 100%;
+  min-width: 0;
+  color: var(--cmh-text);
+  font-size: 13px;
+  font-weight: 650;
+}
+
+#panel-scan .field input,
+#panel-scan .field select,
+#panel-scan .select-wrap {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+}
+
+#panel-scan .select-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+#panel-scan .field input,
+#panel-scan .field select {
+  min-height: 46px;
+  padding: 11px 13px;
+  border: 1px solid #304057;
+  border-radius: 10px;
+  background-color: #0a1220;
+  color: var(--cmh-text);
+  font: inherit;
+  font-weight: 400;
+}
+
+#panel-scan .field input:focus,
+#panel-scan .field select:focus {
+  border-color: var(--cmh-green);
+  outline: 2px solid rgba(114, 245, 154, 0.12);
+}
+
+#panel-scan .field small {
+  color: var(--cmh-muted);
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 1.6;
+}
+
+/* Buttons */
+button {
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease,
+    transform 160ms ease;
+}
+
+button:hover {
+  border-color: #477557;
+}
+
+button.primary {
+  background: var(--cmh-green);
+  color: #07120b;
+  font-weight: 750;
+}
+
+button.primary:hover {
+  background: #91ffb0;
+  transform: translateY(-1px);
+}
+
+button.big {
+  min-height: 48px;
+  padding: 12px 20px;
+  border-radius: 11px;
+  white-space: nowrap;
+}
+
+/* Status and result areas */
+.statusline {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 24px;
+  padding-top: 18px;
+  border-top: 1px solid var(--cmh-border);
+  color: var(--cmh-muted);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.status-spacer {
+  flex: 1;
+}
+
+#scan-results,
+#radar-search-results,
+#token-queue,
+#chain-results,
+#follow-alert-box {
+  min-width: 0;
+  margin-top: 18px;
+}
+
+.section-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.inline-search,
+.action-row,
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+input,
+select {
+  max-width: 100%;
+}
+
+input:focus-visible,
+select:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--cmh-green);
+  outline-offset: 3px;
+}
+
+/* Tables */
+.table-scroll {
+  width: 100%;
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th {
+  color: var(--cmh-muted);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.7px;
+  text-transform: uppercase;
+}
+
+th,
+td {
+  padding: 15px 12px;
+  border-bottom: 1px solid var(--cmh-border);
+  text-align: left;
+}
+
+tbody tr:hover {
+  background: rgba(114, 245, 154, 0.035);
+}
+
+/* Smaller screens */
+@media (max-width: 1000px) {
+  .hero {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .hero-stats {
+    width: 100%;
+  }
+
+  .hero-stats > div {
+    flex: 1;
+  }
+
+  #panel-scan .controls {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  #panel-scan .field.wide {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 640px) {
+  .app-shell {
+    width: calc(100% - 28px);
+  }
+
+  .hero {
+    padding-top: 30px;
+  }
+
+  .hero-stats {
+    gap: 10px;
+  }
+
+  .hero-stats > div {
+    min-width: 0;
+    padding: 13px;
+  }
+
+  .hero-stats b {
+    font-size: 22px;
+  }
+
+  .tabs {
+    gap: 5px;
+  }
+
+  .tabs button {
+    flex: 1 1 auto;
+    padding: 10px;
+    font-size: 12px;
+  }
+
+  .control-card,
+  .card {
+    padding: 18px;
+    border-radius: 15px;
+  }
+
+  .control-title,
+  .section-head {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .control-title button {
+    align-self: flex-start;
+  }
+
+  #panel-scan .controls {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 18px;
+  }
+
+  #panel-scan .field.wide {
+    grid-column: auto;
+  }
+
+  .radar-search {
+    gap: 8px;
+    padding-left: 10px;
+  }
+
+  .radar-search button {
+    min-width: 72px;
+    padding: 10px;
+  }
+
+  .radar-search input {
+    font-size: 12px;
+  }
+
+  .inline-search,
+  .action-row {
+    align-items: stretch;
+  }
+
+  .statusline {
+    align-items: flex-start;
+  }
+}
+
+
+/* CMH Radar — reference-inspired hero banner */
+.dashboard-hero {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  min-height: 238px;
+  margin: 0 0 24px;
+  padding: 32px;
+  overflow: hidden;
+  border: 1px solid #21483e;
+  border-radius: 20px;
+  background:
+    radial-gradient(ellipse at 78% 50%, rgba(0, 226, 133, .14), transparent 35%),
+    radial-gradient(ellipse at 58% 20%, rgba(28, 102, 171, .18), transparent 42%),
+    linear-gradient(115deg, #07121b, #0b1b28 65%, #071a19);
+}
+
+.dashboard-hero-content {
+  position: relative;
+  z-index: 2;
+  max-width: 760px;
+}
+
+.dashboard-hero h2 {
+  margin: 14px 0 10px;
+  font-size: clamp(30px, 3.5vw, 48px);
+  line-height: 1.12;
+  letter-spacing: -1.5px;
+}
+
+.dashboard-hero h2 span {
+  color: #72f59a;
+}
+
+.dashboard-hero p {
+  max-width: 650px;
+  margin: 0;
+  color: #b7c5d6;
+  line-height: 1.7;
+}
+
+.hero-features {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+  margin-top: 22px;
+}
+
+.hero-features span {
+  padding: 9px 12px;
+  border: 1px solid #24374a;
+  border-radius: 9px;
+  background: rgba(8, 19, 31, .78);
+  color: #dce8f4;
+  font-size: 11px;
+}
+
+.hero-visual {
+  position: relative;
+  display: grid;
+  flex: 0 0 245px;
+  place-items: center;
+  min-height: 185px;
+}
+
+.hero-orb {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 128px;
+  height: 128px;
+  border: 1px solid #387b63;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 25%, #193d3b, #07100f 72%);
+  box-shadow: 0 0 35px rgba(34, 255, 151, .17),
+              inset 0 0 22px rgba(34, 255, 151, .09);
+}
+
+.hero-bars {
+  display: flex;
+  align-items: end;
+  gap: 7px;
+  height: 54px;
+  transform: skewY(-12deg);
+}
+
+.hero-bars i {
+  display: block;
+  width: 12px;
+  height: 25px;
+  border-radius: 4px;
+  background: #72f59a;
+  box-shadow: 0 0 12px rgba(114, 245, 154, .3);
+}
+
+.hero-bars i:nth-child(2) { height: 38px; }
+.hero-bars i:nth-child(3) { height: 51px; }
+.hero-bars i:nth-child(4) { height: 32px; }
+
+.hero-orbit {
+  position: absolute;
+  width: 220px;
+  height: 65px;
+  border: 1px solid rgba(32, 214, 164, .4);
+  border-radius: 50%;
+  transform: rotate(-12deg);
+}
+
+.orbit-two {
+  width: 185px;
+  height: 48px;
+  transform: rotate(15deg);
+  border-color: rgba(38, 147, 220, .35);
+}
+
+.hero-float {
+  position: absolute;
+  z-index: 2;
+  padding: 8px 11px;
+  border: 1px solid #285442;
+  border-radius: 8px;
+  background: #102a25;
+  color: #9affb7;
+  font-size: 10px;
+  font-weight: 750;
+  letter-spacing: .5px;
+}
+
+.float-one {
+  top: 10px;
+  right: 0;
+}
+
+.float-two {
+  right: -3px;
+  bottom: 14px;
+  background: #102031;
+  border-color: #29445e;
+  color: #c7e1ff;
+}
+
+@media (max-width: 760px) {
+  .dashboard-hero {
+    padding: 24px;
+  }
+
+  .hero-visual {
+    display: none;
+  }
+
+  .dashboard-hero h2 {
+    font-size: 32px;
+  }
+}
+
+/* CMH Radar — scanner alignment refinement */
+#panel-scan .control-card {
+  padding: 26px;
+  background: linear-gradient(145deg, #0d1724, #0a111c);
+  border-color: #233448;
+}
+
+#panel-scan .control-title {
+  align-items: flex-start;
+  margin-bottom: 22px;
+}
+
+#panel-scan .control-title .primary {
+  flex-shrink: 0;
+}
+
+#panel-scan .radar-search {
+  display: flex;
+  align-items: center;
+  min-height: 52px;
+  margin-bottom: 22px;
+}
+
+#panel-scan .radar-search input {
+  flex: 1;
+  min-width: 0;
+}
+
+#panel-scan .controls {
+  display: grid;
+  grid-template-columns: 1.15fr 1fr 0.7fr;
+  align-items: start;
+  gap: 18px;
+  margin-top: 0;
+}
+
+#panel-scan .controls > .field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+  margin: 0;
+}
+
+#panel-scan .controls .select-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+/* Make the network search and dropdown visually distinct */
+#panel-scan #scan-chain-search,
+#panel-scan #scan-chain,
+#panel-scan #scan-source,
+#panel-scan #scan-n-tokens {
+  width: 100%;
+  min-width: 0;
+  min-height: 44px;
+  padding: 10px 12px;
+  border: 1px solid #344459;
+  border-radius: 10px;
+  background-color: #0a1220;
+  color: #edf4fb;
+  font-size: 13px;
+}
+
+/* Network quick-select buttons, if provided by the app */
+#panel-scan .chain-results {
+  margin-top: 20px;
+}
+
+#panel-scan .chain-results button {
+  margin: 4px;
+  border-radius: 9px;
+}
+
+/* Status row */
+#panel-scan .statusline {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid #233448;
+}
+
+/* Responsive layout */
+@media (max-width: 850px) {
+  #panel-scan .controls {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  #panel-scan .controls > .field.wide {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 560px) {
+  #panel-scan .control-card {
+    padding: 18px;
+  }
+
+  #panel-scan .controls {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  #panel-scan .controls > .field.wide {
+    grid-column: auto;
+  }
+
+  #panel-scan .control-title {
+    flex-direction: column;
+  }
+
+  #panel-scan .radar-search {
+    gap: 7px;
+    padding-left: 10px;
+  }
+}
+
+/* CMH Radar — final scanner control layout */
+#panel-scan .controls {
+  display: grid;
+  grid-template-columns: 1.15fr 1fr 0.7fr;
+  gap: 16px;
+  align-items: start;
+  margin-top: 4px;
+}
+
+#panel-scan .controls > .field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+  margin: 0;
+  color: #e8f0fa;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+#panel-scan .controls > .field select {
+  width: 100%;
+  min-width: 0;
+  height: 46px;
+  padding: 0 13px;
+  border: 1px solid #344459;
+  border-radius: 10px;
+  background: #0b1421;
+  color: #edf4fb;
+  font-size: 13px;
+}
+
+#panel-scan .controls > .field small {
+  color: #8fa1b7;
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+#panel-scan #scan-run {
+  min-height: 48px;
+  padding: 12px 24px;
+  border: 0;
+  border-radius: 11px;
+  background: linear-gradient(100deg, #62ed83, #8bff9f);
+  color: #07150b;
+  font-size: 14px;
+  font-weight: 750;
+  box-shadow: 0 4px 18px rgba(90, 245, 130, 0.12);
+}
+
+#panel-scan #scan-run:hover {
+  filter: brightness(1.06);
+  transform: translateY(-1px);
+}
+
+#panel-scan .control-title {
+  margin-bottom: 22px;
+}
+
+#panel-scan .radar-search {
+  min-height: 52px;
+  border-color: #2d4057;
+  border-radius: 11px;
+  background: #080f19;
+}
+
+#panel-scan .radar-search input {
+  color: #edf4fb;
+  font-size: 14px;
+}
+
+#panel-scan .radar-search button {
+  min-height: 40px;
+  padding: 0 20px;
+  border-radius: 9px;
+}
+
+/* Network chips */
+#panel-scan .chain-results {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 20px;
+}
+
+#panel-scan .chain-results button {
+  margin: 0;
+  padding: 9px 13px;
+  border: 1px solid #29384c;
+  border-radius: 9px;
+  background: #101b29;
+  color: #dce7f4;
+  font-size: 11px;
+}
+
+#panel-scan .chain-results button:hover {
+  border-color: #72f59a;
+  color: #72f59a;
+}
+
+@media (max-width: 760px) {
+  #panel-scan .controls {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* CMH Radar — results dashboard polish */
+#panel-scan #scan-results {
+  display: block;
+  min-width: 0;
+  margin-top: 20px;
+}
+
+#panel-scan #scan-results > * {
+  min-width: 0;
+}
+ 
+
+
+#panel-scan #scan-results > * {
+  min-width: 0;
+}
+
+#panel-scan #scan-results .card,
+#panel-scan #scan-results .result-card {
+  min-width: 0;
+  padding: 18px;
+  overflow: hidden;
+  border: 1px solid #243448;
+  border-radius: 15px;
+  background: linear-gradient(145deg, #101a28, #0b131f);
+}
+
+#panel-scan #scan-results h2,
+#panel-scan #scan-results h3 {
+  color: #edf4fb;
+  font-size: 16px;
+  line-height: 1.4;
+}
+
+#panel-scan #scan-results table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+#panel-scan #scan-results th,
+#panel-scan #scan-results td {
+  padding: 11px 8px;
+  border-bottom: 1px solid #202d3e;
+  font-size: 12px;
+  text-align: left;
+}
+
+#panel-scan #scan-results th {
+  color: #91a2b7;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+}
+
+#panel-scan #scan-results td {
+  color: #dce6f2;
+}
+
+#panel-scan #scan-results tr:last-child td {
+  border-bottom: 0;
+}
+
+#panel-scan #scan-results .muted {
+  color: #91a2b7;
+}
+
+@media (max-width: 1000px) {
+  #panel-scan #scan-results {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 650px) {
+  #panel-scan #scan-results {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* CMH Radar — three-card overview */
+#panel-scan #scan-results .overview-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 18px;
+  align-items: stretch;
+}
+
+#panel-scan #scan-results .overview-card {
+  min-width: 0;
+  padding: 18px;
+  border: 1px solid #243448;
+  border-radius: 16px;
+  background: linear-gradient(145deg, #101a28, #0a121d);
+}
+
+.overview-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.overview-heading h3 {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.overview-count {
+  flex-shrink: 0;
+  padding: 4px 8px;
+  border-radius: 7px;
+  background: #172a28;
+  color: #72f59a;
+  font-size: 11px;
+}
+
+.overview-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.overview-row {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-width: 0;
+  padding: 12px 0;
+  border-bottom: 1px solid #202d3e;
+}
+
+.overview-row:last-child {
+  border-bottom: 0;
+}
+
+.overview-rank {
+  width: 16px;
+  color: #91a2b7;
+  font-size: 11px;
+}
+
+.overview-row .avatar {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+}
+
+.overview-main {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.overview-main b {
+  overflow: hidden;
+  color: #edf4fb;
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.overview-main small {
+  color: #91a2b7;
+  font-size: 10px;
+}
+
+.overview-row > strong {
+  flex-shrink: 0;
+  font-size: 11px;
+}
+
+.overview-wallet-icon,
+.overview-signal-icon {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #172a28;
+  color: #72f59a;
+}
+
+.overview-signal-icon {
+  font-size: 12px;
+}
+
+.overview-disclaimer {
+  margin: 12px 0 0;
+  color: #91a2b7;
+  font-size: 10px;
+  line-height: 1.6;
+}
+
+@media (max-width: 1000px) {
+  #panel-scan #scan-results .overview-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 650px) {
+  #panel-scan #scan-results .overview-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+/* CMH Radar — Smart Wallet Comparison */
+.smart-compare {
+  margin: 20px 0;
+  padding: 22px;
+  border: 1px solid var(--border, #273449);
+  border-radius: 16px;
+  background: var(--card, #101827);
+  color: var(--text, #e8edf5);
+  min-width: 0;
+}
+
+.smart-compare-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.smart-compare-head h2 {
+  margin: 6px 0;
+  font-size: 20px;
+}
+
+.smart-compare-head p {
+  margin: 0;
+  color: var(--muted, #91a0b7);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.compare-status {
+  display: inline-flex;
+  padding: 7px 11px;
+  margin-bottom: 14px;
+  border: 1px solid var(--border, #273449);
+  border-radius: 8px;
+  font-size: 12px;
+  color: var(--muted, #91a0b7);
+}
+
+.compare-empty {
+  padding: 22px;
+  border: 1px dashed var(--border, #273449);
+  border-radius: 10px;
+  color: var(--muted, #91a0b7);
+  font-size: 13px;
+  line-height: 1.6;
+  text-align: center;
+}
+
+.compare-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+  border: 1px solid var(--border, #273449);
+  border-radius: 10px;
+}
+
+.compare-table {
+  width: 100%;
+  min-width: 580px;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.compare-table th,
+.compare-table td {
+  padding: 13px 15px;
+  border-bottom: 1px solid var(--border, #273449);
+  text-align: left;
+  vertical-align: top;
+  overflow-wrap: anywhere;
+}
+
+.compare-table thead th {
+  background: rgba(120, 140, 170, 0.08);
+  font-weight: 700;
+}
+
+.compare-table thead th:first-child,
+.compare-table tbody th {
+  color: var(--muted, #91a0b7);
+}
+
+.compare-table thead small {
+  display: inline-block;
+  max-width: 190px;
+  margin-top: 6px;
+  color: var(--muted, #91a0b7);
+  font-size: 10px;
+  font-weight: 400;
+  overflow-wrap: anywhere;
+}
+
+.compare-table tbody tr:last-child th,
+.compare-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.compare-wallet {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 7px;
+  color: var(--muted, #91a0b7);
+  font-size: 10px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.compare-wallet input {
+  accent-color: var(--accent, #6c8cff);
+  cursor: pointer;
+}
+
+@media (max-width: 700px) {
+  .smart-compare {
+    padding: 15px;
+  }
+
+  .smart-compare-head h2 {
+    font-size: 17px;
+  }
+
+  .compare-table th,
+  .compare-table td {
+    padding: 10px;
+  }
+}
+.cg-top-attribution {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+  padding-left: 12px;
+  font-size: 11px;
+  color: #aab5c4;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.cg-gecko-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  font-size: 16px;
+  line-height: 1;
+}
+.cg-top-attribution {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+  padding-left: 12px;
+  font-size: 11px;
+  color: #aab5c4;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.cg-top-attribution img {
+  display: block;
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+.sidebar-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 32px;
+  padding: 0;
+  margin: 8px 10px;
+  background: transparent;
+  border: 1px solid var(--border, #263445);
+  border-radius: 6px;
+  color: var(--text, #ffffff);
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.side-nav.sidebar-collapsed {
+  width: 0 !important;
+  min-width: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  border: none !important;
+}
+
+.app-frame:has(.side-nav.sidebar-collapsed) {
+  grid-template-columns: 0 minmax(0, 1fr) !important;
+}
