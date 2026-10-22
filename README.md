@@ -10,11 +10,11 @@ The project explores how market data and wallet activity can be used to evaluate
 
 
 ## CMH Radar Demo
+## CMH Radar Demo
 
-![CMH Radar Demo](media/cmh-radar-demo.gif)
+Watch CMH Radar in action:
 
-
-![Data powered by CoinGecko API](core/brand/coingecko-api-on-light.svg)
+[Watch the 40-second demo](media/cmh-radar-demo.mp4)
 
 ## Features
 
