@@ -9,11 +9,9 @@ CMH Radar is a crypto market and wallet intelligence project built on CoinGecko 
 The project explores how market data and wallet activity can be used to evaluate tokens and analyze trading strategies.
 
 
-<h2>CMH Radar Demo</h2>
+## CMH Radar Demo
 
-<p>Watch CMH Radar in action:</p>
-
-<video src="media/cmh-radar-demo.mp4" controls width="100%"></video>
+![CMH Radar Demo](media/cmh-radar-demo.gif)
 
 
 ![Data powered by CoinGecko API](core/brand/coingecko-api-on-light.svg)
