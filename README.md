@@ -11,7 +11,7 @@ The project explores how market data and wallet activity can be used to evaluate
 
 ## CMH Radar Demo
 
-![CMH Radar Demo](media/cmh-radar-demo.mp4)
+[Watch the CMH Radar demo](media/cmh-radar-demo.mp4)
 
 ## Features
 
